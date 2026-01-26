@@ -231,7 +231,7 @@ export const useRecordsStore = create<RecordsState & RecordsActions>()(
               comparison = a.tags.taskType.localeCompare(b.tags.taskType);
               break;
             case 'energyLevel':
-              comparison = (a.selfReport?.energyLevel || 0) - (b.selfReport?.energyLevel || 0);
+              comparison = (a.selfReport?.energyLevel ?? 0) - (b.selfReport?.energyLevel ?? 0);
               break;
             case 'totalDuration':
               comparison = calculateRecordDuration(a) - calculateRecordDuration(b);

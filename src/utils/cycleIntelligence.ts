@@ -123,15 +123,16 @@ export function getSuggestedPeakDuration(
   currentEnergy: 1 | 2 | 3 | 4 | 5,
   defaultPeakMinutes: number
 ): number {
+  const energySuggested = ENERGY_SUGGESTIONS[currentEnergy].suggestedPeakMinutes;
+
   // If no patterns available, blend energy suggestion with default
+  // Give more weight to energy (60%) so it actually influences the suggestion
   if (!patterns) {
-    const energySuggested = ENERGY_SUGGESTIONS[currentEnergy].suggestedPeakMinutes;
-    // Weight energy suggestion at 30% and default at 70% when no history
-    return Math.round(energySuggested * 0.3 + defaultPeakMinutes * 0.7);
+    return Math.round(energySuggested * 0.6 + defaultPeakMinutes * 0.4);
   }
 
-  // Base suggestion on energy level
-  let suggested = ENERGY_SUGGESTIONS[currentEnergy].suggestedPeakMinutes;
+  // With patterns, start from energy-based suggestion
+  let suggested = energySuggested;
 
   // Adjust based on historical patterns
   if (patterns.suggestedPeakAdjustment) {

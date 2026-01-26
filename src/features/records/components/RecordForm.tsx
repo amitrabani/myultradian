@@ -33,8 +33,8 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
       setTaskType(record.tags.taskType);
       setGoal(record.tags.goal || '');
       setTemplateId(record.templateId);
-      setEnergyLevel(record.selfReport?.energyLevel || null);
-      setDistractionCount(record.selfReport?.distractionCount || 0);
+      setEnergyLevel(record.selfReport?.energyLevel ?? null);
+      setDistractionCount(record.selfReport?.distractionCount ?? 0);
       setNotes(record.selfReport?.notes || '');
       setCompleted(record.completed);
     } else {
@@ -60,6 +60,9 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
           topic: topic.trim(),
           taskType,
           goal: goal.trim() || undefined,
+          // Preserve existing intention and preSessionEnergy
+          intention: record.tags.intention,
+          preSessionEnergy: record.tags.preSessionEnergy,
         },
         templateId,
         templateName: template.name,
@@ -151,24 +154,25 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
           onChange={(e) => setTemplateId(e.target.value)}
         />
 
-        <label className="filter-checkbox">
+        <label className="label cursor-pointer justify-start gap-3">
           <input
             type="checkbox"
+            className="checkbox checkbox-primary"
             checked={completed}
             onChange={(e) => setCompleted(e.target.checked)}
           />
-          <span>Completed full cycle</span>
+          <span className="label-text">Completed full cycle</span>
         </label>
 
-        <hr style={{ border: 'none', borderTop: '1px solid var(--color-slate-200)', margin: '1rem 0' }} />
+        <div className="divider my-2"></div>
 
-        <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-500)' }}>
+        <p className="text-sm text-base-content/60">
           Self-report (optional)
         </p>
 
-        <div>
-          <label className="input-label" style={{ marginBottom: '0.5rem', display: 'block' }}>
-            Energy Level
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text font-medium">Energy Level</span>
           </label>
           <div className="flex gap-2">
             {([1, 2, 3, 4, 5] as const).map((level) => (
@@ -176,10 +180,9 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
                 key={level}
                 type="button"
                 onClick={() => setEnergyLevel(energyLevel === level ? null : level)}
-                className={`energy-btn ${energyLevel === level ? 'selected' : ''}`}
-                style={{ padding: '0.5rem', flex: 1 }}
+                className={`btn btn-sm flex-1 ${energyLevel === level ? 'btn-primary' : 'btn-ghost'}`}
               >
-                <span style={{ fontSize: '1.25rem' }}>{energyEmojis[level - 1]}</span>
+                <span className="text-lg">{energyEmojis[level - 1]}</span>
               </button>
             ))}
           </div>
@@ -202,7 +205,7 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
           rows={2}
         />
 
-        <div className="flex gap-3" style={{ paddingTop: '1rem' }}>
+        <div className="flex gap-3 pt-4">
           <Button variant="ghost" className="flex-1" onClick={onClose}>
             Cancel
           </Button>

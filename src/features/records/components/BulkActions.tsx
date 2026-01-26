@@ -45,8 +45,8 @@ export function BulkActions({
   };
 
   return (
-    <div className="bulk-actions">
-      <div className="bulk-actions-left">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 py-2">
+      <div className="flex items-center gap-3">
         <BulkCheckbox
           selectedCount={selectedIds.size}
           totalCount={filteredRecords.length}
@@ -54,13 +54,13 @@ export function BulkActions({
           onDeselectAll={onDeselectAll}
         />
         {selectedIds.size > 0 && (
-          <span className="bulk-selection-count">
+          <span className="text-sm font-medium text-base-content/70">
             {selectedIds.size} selected
           </span>
         )}
       </div>
 
-      <div className="bulk-actions-right">
+      <div className="flex flex-wrap gap-2">
         {selectedIds.size > 0 && (
           <Button
             variant="danger"

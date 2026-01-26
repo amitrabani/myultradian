@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRecordsStore } from '../../stores/recordsStore';
+import { useSessionSetupStore } from '../../stores/sessionSetupStore';
 import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
 import { RecordsTable, RecordFilters, RecordForm, DeleteConfirmModal, BulkActions } from './components';
@@ -11,10 +13,12 @@ export function RecordsPage() {
   const [deletingRecord, setDeletingRecord] = useState<FocusRecord | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
+  const navigate = useNavigate();
   const deleteRecord = useRecordsStore((state) => state.deleteRecord);
   const records = useRecordsStore((state) => state.records);
   const getFilteredRecords = useRecordsStore((state) => state.getFilteredRecords);
   const filteredRecords = getFilteredRecords();
+  const setPrefillTags = useSessionSetupStore((state) => state.setPrefillTags);
 
   const handleEdit = (record: FocusRecord) => {
     setEditingRecord(record);
@@ -46,9 +50,8 @@ export function RecordsPage() {
   };
 
   const handleDuplicate = (tags: SessionTags) => {
-    // Show a notification or navigate to timer
-    // TODO: In the future, integrate with navigation to pre-fill SessionSetup
-    alert(`Session tags copied! Topic: "${tags.topic}", Type: "${tags.taskType}". You can now start a new session with these settings.`);
+    setPrefillTags(tags);
+    navigate('/timer');
   };
 
   return (

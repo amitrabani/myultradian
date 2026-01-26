@@ -52,17 +52,17 @@ export function RecordsTable({
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sort.field !== field) {
       return (
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-4 h-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
         </svg>
       );
     }
     return sort.direction === 'asc' ? (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: 'var(--color-emerald-600)' }}>
+      <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
       </svg>
     ) : (
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: 'var(--color-emerald-600)' }}>
+      <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
       </svg>
     );
@@ -70,8 +70,8 @@ export function RecordsTable({
 
   if (records.length === 0) {
     return (
-      <div className="empty-state">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+        <svg className="w-12 h-12 text-base-content/30 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -79,57 +79,57 @@ export function RecordsTable({
             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
           />
         </svg>
-        <p>No records found. Complete a focus session to see it here.</p>
+        <p className="text-base-content/50">No records found. Complete a focus session to see it here.</p>
       </div>
     );
   }
 
   return (
-    <div className="records-table">
-      <table>
+    <div className="overflow-x-auto">
+      <table className="table table-zebra">
         <thead>
           <tr>
-            <th className="checkbox-column">
+            <th className="w-12">
               {/* Checkbox header handled by BulkActions */}
             </th>
             <th>
-              <button onClick={() => handleSort('createdAt')}>
+              <button className="btn btn-ghost btn-xs gap-1" onClick={() => handleSort('createdAt')}>
                 Date
-                <SortIcon field="createdAt" />
+                <span className="w-4 h-4"><SortIcon field="createdAt" /></span>
               </button>
             </th>
             <th>
-              <button onClick={() => handleSort('topic')}>
+              <button className="btn btn-ghost btn-xs gap-1" onClick={() => handleSort('topic')}>
                 Topic
-                <SortIcon field="topic" />
+                <span className="w-4 h-4"><SortIcon field="topic" /></span>
               </button>
             </th>
             <th>
-              <button onClick={() => handleSort('taskType')}>
+              <button className="btn btn-ghost btn-xs gap-1" onClick={() => handleSort('taskType')}>
                 Type
-                <SortIcon field="taskType" />
+                <span className="w-4 h-4"><SortIcon field="taskType" /></span>
               </button>
             </th>
             <th>
-              <button onClick={() => handleSort('totalDuration')}>
+              <button className="btn btn-ghost btn-xs gap-1" onClick={() => handleSort('totalDuration')}>
                 Duration
-                <SortIcon field="totalDuration" />
+                <span className="w-4 h-4"><SortIcon field="totalDuration" /></span>
               </button>
             </th>
             <th>Status</th>
             <th>
-              <button onClick={() => handleSort('energyLevel')}>
+              <button className="btn btn-ghost btn-xs gap-1" onClick={() => handleSort('energyLevel')}>
                 Energy
-                <SortIcon field="energyLevel" />
+                <span className="w-4 h-4"><SortIcon field="energyLevel" /></span>
               </button>
             </th>
-            <th style={{ textAlign: 'right' }}>Actions</th>
+            <th className="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
           {records.map((record) => (
-            <tr key={record.id} className={selectedIds.has(record.id) ? 'selected' : ''}>
-              <td className="checkbox-column">
+            <tr key={record.id} className={selectedIds.has(record.id) ? 'bg-primary/10' : ''}>
+              <td>
                 <RadixCheckbox
                   checked={selectedIds.has(record.id)}
                   onCheckedChange={(checked) =>
@@ -138,27 +138,27 @@ export function RecordsTable({
                   aria-label={`Select record ${record.tags.topic}`}
                 />
               </td>
-              <td className="record-date">
+              <td className="text-sm text-base-content/70 whitespace-nowrap">
                 {formatDateTimeDisplay(record.createdAt)}
               </td>
               <td>
-                <div className="record-topic">{record.tags.topic}</div>
+                <div className="font-medium">{record.tags.topic}</div>
                 {record.tags.goal && (
-                  <div className="record-goal">{record.tags.goal}</div>
+                  <div className="text-xs text-base-content/50 mt-0.5">{record.tags.goal}</div>
                 )}
               </td>
               <td>
-                <span className="badge badge-slate">
+                <span className="badge badge-ghost badge-sm">
                   {TASK_TYPE_LABELS[record.tags.taskType]}
                 </span>
               </td>
-              <td className="record-duration">
+              <td className="font-mono text-sm">
                 {formatMinutes(calculateRecordDuration(record))}
               </td>
               <td>
                 {record.completed ? (
-                  <span className="badge badge-emerald">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
+                  <span className="badge badge-success badge-sm gap-1">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -168,10 +168,10 @@ export function RecordsTable({
                     Complete
                   </span>
                 ) : (
-                  <span className="badge badge-amber">Ended Early</span>
+                  <span className="badge badge-warning badge-sm">Ended Early</span>
                 )}
               </td>
-              <td style={{ fontSize: '1.125rem' }}>
+              <td className="text-lg text-center">
                 {record.selfReport?.energyLevel ? (
                   <>
                     {record.selfReport.energyLevel === 1 && '😩'}
@@ -181,18 +181,18 @@ export function RecordsTable({
                     {record.selfReport.energyLevel === 5 && '😊'}
                   </>
                 ) : (
-                  <span style={{ color: 'var(--color-slate-400)' }}>-</span>
+                  <span className="text-base-content/30">-</span>
                 )}
               </td>
               <td>
-                <div className="record-actions">
+                <div className="flex justify-end gap-1">
                   <button
                     onClick={() => handleDuplicate(record.id)}
-                    className="record-action-btn"
+                    className="btn btn-ghost btn-xs btn-square"
                     aria-label="Duplicate as new session"
                     title="Start new session with these tags"
                   >
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -203,10 +203,10 @@ export function RecordsTable({
                   </button>
                   <button
                     onClick={() => onEdit(record)}
-                    className="record-action-btn"
+                    className="btn btn-ghost btn-xs btn-square"
                     aria-label="Edit record"
                   >
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -217,10 +217,10 @@ export function RecordsTable({
                   </button>
                   <button
                     onClick={() => onDelete(record)}
-                    className="record-action-btn delete"
+                    className="btn btn-ghost btn-xs btn-square text-error hover:bg-error/10"
                     aria-label="Delete record"
                   >
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"

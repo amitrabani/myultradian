@@ -1,5 +1,10 @@
 import type { FocusRecord } from '../types/record';
-import { TASK_TYPE_LABELS } from '../types/record';
+import {
+  TASK_TYPE_LABELS,
+  FRICTION_LEVEL_LABELS,
+  EARLY_STOP_REASON_LABELS,
+  RECOVERY_ACTIVITY_LABELS,
+} from '../types/record';
 import { formatDateTimeDisplay } from './time';
 import { calculateRecordDuration } from './statistics';
 
@@ -14,9 +19,19 @@ export function exportRecordsToCSV(records: FocusRecord[]): void {
     'Goal',
     'Template',
     'Duration (min)',
+    'Ramp-Up (min)',
+    'Peak (min)',
+    'Downshift (min)',
+    'Recovery (min)',
     'Completed',
-    'Energy Level',
+    'Pre-Session Energy',
+    'Post-Session Energy',
     'Distractions',
+    'Friction Level',
+    'Pause Count',
+    'Recovery Outcome',
+    'Recovery Activities',
+    'Early Stop Reason',
     'Notes',
   ];
 
@@ -27,9 +42,19 @@ export function exportRecordsToCSV(records: FocusRecord[]): void {
     escapeCSV(record.tags.goal || ''),
     escapeCSV(record.templateName),
     Math.round(calculateRecordDuration(record)),
+    Math.round(record.actualDurations['ramp-up'] ?? 0),
+    Math.round(record.actualDurations['peak'] ?? 0),
+    Math.round(record.actualDurations['downshift'] ?? 0),
+    Math.round(record.actualDurations['recovery'] ?? 0),
     record.completed ? 'Yes' : 'No',
-    record.selfReport?.energyLevel || '',
-    record.selfReport?.distractionCount || 0,
+    record.tags.preSessionEnergy ?? '',
+    record.selfReport?.energyLevel ?? '',
+    record.selfReport?.distractionCount ?? 0,
+    record.frictionLevel ? FRICTION_LEVEL_LABELS[record.frictionLevel].label : '',
+    record.pauseCount ?? 0,
+    record.recoveryOutcome ?? '',
+    record.recoveryActivities?.map(a => RECOVERY_ACTIVITY_LABELS[a].label).join('; ') ?? '',
+    record.earlyStopReason ? EARLY_STOP_REASON_LABELS[record.earlyStopReason] : '',
     escapeCSV(record.selfReport?.notes || ''),
   ]);
 

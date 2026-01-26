@@ -20,21 +20,21 @@ export function DeleteConfirmModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Delete Record" size="sm">
       <div className="space-y-4">
-        <p style={{ color: 'var(--color-slate-600)' }}>
+        <p className="text-base-content/70">
           Are you sure you want to delete this record?
         </p>
-        <div className="template-info">
-          <p style={{ fontWeight: 500, color: 'var(--color-slate-900)' }}>
+        <div className="bg-base-200 rounded-lg p-3">
+          <p className="font-medium text-base-content">
             {record.tags.topic}
           </p>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-500)' }}>
+          <p className="text-sm text-base-content/60 mt-1">
             {new Date(record.createdAt).toLocaleString()}
           </p>
         </div>
-        <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-500)' }}>
+        <p className="text-sm text-base-content/50">
           This action cannot be undone.
         </p>
-        <div className="flex gap-3">
+        <div className="flex gap-3 pt-2">
           <Button variant="ghost" className="flex-1" onClick={onClose}>
             Cancel
           </Button>

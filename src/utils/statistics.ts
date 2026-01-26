@@ -172,7 +172,7 @@ export function calculateAverageEnergy(records: FocusRecord[]): number {
   if (recordsWithEnergy.length === 0) return 0;
 
   const total = recordsWithEnergy.reduce(
-    (sum, r) => sum + (r.selfReport?.energyLevel || 0),
+    (sum, r) => sum + (r.selfReport?.energyLevel ?? 0),
     0
   );
 
@@ -192,7 +192,7 @@ export function getBestTimeOfDay(
 
   completedRecords.forEach(record => {
     const hour = new Date(record.createdAt).getHours();
-    const energy = record.selfReport?.energyLevel || 0;
+    const energy = record.selfReport?.energyLevel ?? 0;
     const existing = hourlyData.get(hour) || { totalEnergy: 0, count: 0 };
     hourlyData.set(hour, {
       totalEnergy: existing.totalEnergy + energy,
@@ -342,38 +342,58 @@ export function getHourlyHeatmapData(
 
 /**
  * Get recovery impact data (comparing next-cycle performance based on recovery)
+ * Pairs sessions that occur on the same day with reasonable time gaps (1-8 hours)
  */
 export function getRecoveryImpactData(
   records: FocusRecord[]
 ): { fullRecovery: { avgEnergy: number; completionRate: number }; skippedRecovery: { avgEnergy: number; completionRate: number } } {
-  const sortedRecords = [...records].sort(
+  // Only consider completed records for meaningful analysis
+  const completedRecords = records.filter(r => r.completed);
+
+  const sortedRecords = [...completedRecords].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
 
   const afterFull: { energy: number; completed: boolean }[] = [];
   const afterSkipped: { energy: number; completed: boolean }[] = [];
 
-  for (let i = 0; i < sortedRecords.length - 1; i++) {
+  // Group records by date for easier same-day lookups
+  const recordsByDate = new Map<string, FocusRecord[]>();
+  sortedRecords.forEach(record => {
+    const dateKey = formatDateISO(new Date(record.createdAt));
+    const existing = recordsByDate.get(dateKey) || [];
+    recordsByDate.set(dateKey, [...existing, record]);
+  });
+
+  // For each record, find the next session on the same day
+  for (let i = 0; i < sortedRecords.length; i++) {
     const current = sortedRecords[i];
-    const next = sortedRecords[i + 1];
+    const currentTime = new Date(current.createdAt).getTime();
+    const currentDateKey = formatDateISO(new Date(current.createdAt));
 
-    // Check if they're on the same day or consecutive
-    const currentDate = new Date(current.createdAt);
-    const nextDate = new Date(next.createdAt);
-    const hoursDiff = (nextDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60);
+    // Look for the next session on the same day
+    const sameDayRecords = recordsByDate.get(currentDateKey) || [];
+    const nextSession = sameDayRecords.find(r => {
+      const rTime = new Date(r.createdAt).getTime();
+      const hoursDiff = (rTime - currentTime) / (1000 * 60 * 60);
+      // Next session should be 1-8 hours after (reasonable break between sessions)
+      return hoursDiff >= 1 && hoursDiff <= 8;
+    });
 
-    if (hoursDiff < 4) { // Within 4 hours, likely same session
+    if (nextSession) {
       const recoveryRatio = current.plannedDurations['recovery'] > 0
-        ? (current.actualDurations['recovery'] || 0) / current.plannedDurations['recovery']
+        ? (current.actualDurations['recovery'] ?? 0) / current.plannedDurations['recovery']
         : 0;
 
-      const nextEnergy = next.selfReport?.energyLevel || 3;
+      // Use pre-session energy if available, otherwise post-session energy, otherwise default to 3
+      const nextEnergy = nextSession.tags.preSessionEnergy ?? nextSession.selfReport?.energyLevel ?? 3;
       const isFullRecovery = recoveryRatio >= 0.9;
+      const isSkippedRecovery = recoveryRatio < 0.5;
 
       if (isFullRecovery) {
-        afterFull.push({ energy: nextEnergy, completed: next.completed });
-      } else if (recoveryRatio < 0.5) {
-        afterSkipped.push({ energy: nextEnergy, completed: next.completed });
+        afterFull.push({ energy: nextEnergy, completed: nextSession.completed });
+      } else if (isSkippedRecovery) {
+        afterSkipped.push({ energy: nextEnergy, completed: nextSession.completed });
       }
     }
   }
