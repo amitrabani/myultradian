@@ -53,11 +53,11 @@ export function SessionSetup({ onStart }: SessionSetupProps) {
   }));
 
   return (
-    <div className="session-setup">
+    <div className="w-full max-w-lg mx-auto">
       <Card>
-        <h2>Start a Focus Session</h2>
+        <h2 className="text-2xl font-bold text-base-content mb-6">Start a Focus Session</h2>
 
-        <div className="session-setup-form">
+        <div className="space-y-4">
           {/* Template selection */}
           <Select
             label="Cycle Template"
@@ -67,25 +67,25 @@ export function SessionSetup({ onStart }: SessionSetupProps) {
           />
 
           {/* Template info */}
-          <div className="template-info">
-            <p className="template-description">
+          <div className="bg-base-200 rounded-lg p-4 space-y-3">
+            <p className="text-sm text-base-content/70">
               {selectedTemplate.description}
             </p>
-            <div className="template-durations">
-              <span className="template-duration-badge template-duration-rampup">
+            <div className="flex flex-wrap gap-2">
+              <span className="badge badge-primary badge-lg">
                 Ramp-up: {formatMinutes(selectedTemplate.durations['ramp-up'])}
               </span>
-              <span className="template-duration-badge template-duration-peak">
+              <span className="badge badge-secondary badge-lg">
                 Peak: {formatMinutes(selectedTemplate.durations['peak'])}
               </span>
-              <span className="template-duration-badge template-duration-downshift">
+              <span className="badge badge-accent badge-lg">
                 Downshift: {formatMinutes(selectedTemplate.durations['downshift'])}
               </span>
-              <span className="template-duration-badge template-duration-recovery">
+              <span className="badge badge-info badge-lg">
                 Recovery: {formatMinutes(selectedTemplate.durations['recovery'])}
               </span>
             </div>
-            <p className="template-total">
+            <p className="text-sm font-semibold text-base-content">
               Total: {formatMinutes(totalDuration)}
             </p>
           </div>

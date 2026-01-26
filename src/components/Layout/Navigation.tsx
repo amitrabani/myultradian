@@ -67,17 +67,18 @@ const navItems: NavItem[] = [
 
 export function Navigation() {
   return (
-    <nav className="btm-nav btm-nav-sm sm:btm-nav-md z-40 sm:relative sm:flex sm:flex-col sm:w-auto sm:h-auto sm:bg-base-100 sm:border-r sm:border-base-300">
+    <nav className="btm-nav btm-nav-sm sm:btm-nav-md fixed bottom-0 z-40 sm:relative sm:flex sm:flex-col sm:w-64 sm:h-auto sm:bg-base-100 sm:border-r sm:border-base-300 sm:p-4">
       {navItems.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
           className={({ isActive }) =>
-            `${isActive ? 'active text-primary' : 'text-base-content/70 hover:text-base-content'}`
+            `sm:btn sm:btn-ghost sm:justify-start sm:gap-3 ${isActive ? 'active text-primary sm:bg-primary/10' : 'text-base-content/70 hover:text-base-content'
+            }`
           }
         >
-          {item.icon}
-          <span className="btm-nav-label">{item.label}</span>
+          <div className="w-5 h-5">{item.icon}</div>
+          <span className="btm-nav-label sm:inline sm:text-base">{item.label}</span>
         </NavLink>
       ))}
     </nav>

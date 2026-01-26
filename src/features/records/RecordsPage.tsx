@@ -10,7 +10,7 @@ export function RecordsPage() {
   const [editingRecord, setEditingRecord] = useState<FocusRecord | null>(null);
   const [deletingRecord, setDeletingRecord] = useState<FocusRecord | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  
+
   const deleteRecord = useRecordsStore((state) => state.deleteRecord);
   const records = useRecordsStore((state) => state.records);
   const getFilteredRecords = useRecordsStore((state) => state.getFilteredRecords);
@@ -52,12 +52,12 @@ export function RecordsPage() {
   };
 
   return (
-    <div className="page space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="page-title">Focus Records</h1>
-          <p className="page-subtitle">{records.length} total sessions</p>
+          <h1 className="text-2xl font-bold text-base-content">Focus Records</h1>
+          <p className="text-base-content/60 mt-1">{records.length} total sessions</p>
         </div>
         <Button onClick={() => setShowForm(true)}>
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }}>

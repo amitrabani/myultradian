@@ -18,17 +18,17 @@ export function InsightsPage() {
   const hasEnoughData = records.length >= 3;
 
   return (
-    <div className="page space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="page-title">Insights</h1>
-        <p className="page-subtitle">Personalized recommendations based on your focus patterns</p>
+        <h1 className="text-2xl font-bold text-base-content">Insights</h1>
+        <p className="text-base-content/60 mt-1">Personalized recommendations based on your focus patterns</p>
       </div>
 
       {!hasEnoughData ? (
         <Card>
-          <div className="empty-state">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center py-12">
+            <svg className="w-16 h-16 mx-auto text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -36,8 +36,8 @@ export function InsightsPage() {
                 d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
               />
             </svg>
-            <p>Not enough data for insights yet</p>
-            <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-400)', marginTop: '0.5rem' }}>
+            <p className="mt-4 text-base-content/60">Not enough data for insights yet</p>
+            <p className="text-sm text-base-content/50 mt-2">
               Complete at least 3 focus sessions to unlock personalized insights
             </p>
           </div>
@@ -46,27 +46,27 @@ export function InsightsPage() {
         <>
           {/* Weekly Summary */}
           <Card>
-            <h2 className="card-title" style={{ marginBottom: '1rem' }}>This Week's Summary</h2>
-            <div className="weekly-summary">
-              <div>
-                <p className="weekly-stat-value emerald">{formatMinutes(weeklyStats.totalFocusTime)}</p>
-                <p className="weekly-stat-label">Focus time</p>
+            <h2 className="text-lg font-semibold text-base-content mb-4">This Week's Summary</h2>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-success">{formatMinutes(weeklyStats.totalFocusTime)}</p>
+                <p className="text-sm text-base-content/60 mt-1">Focus time</p>
               </div>
-              <div>
-                <p className="weekly-stat-value indigo">{weeklyStats.completedCycles}</p>
-                <p className="weekly-stat-label">Cycles</p>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-info">{weeklyStats.completedCycles}</p>
+                <p className="text-sm text-base-content/60 mt-1">Cycles</p>
               </div>
-              <div>
-                <p className="weekly-stat-value amber">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-warning">
                   {weeklyStats.averageEnergy ? weeklyStats.averageEnergy.toFixed(1) : '-'}
                 </p>
-                <p className="weekly-stat-label">Avg. energy</p>
+                <p className="text-sm text-base-content/60 mt-1">Avg. energy</p>
               </div>
             </div>
           </Card>
 
           {/* Insights Grid */}
-          <div className="insights-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Best Time of Day */}
             {insights.bestTimeOfDay && (
               <InsightCard
@@ -82,13 +82,13 @@ export function InsightsPage() {
                   </svg>
                 }
               >
-                <p className="insight-value">{formatHour(insights.bestTimeOfDay.hour)}</p>
+                <p className="text-lg font-bold text-base-content mb-2">{formatHour(insights.bestTimeOfDay.hour)}</p>
                 <p>
                   You tend to have the highest energy levels around{' '}
                   <strong>{formatHour(insights.bestTimeOfDay.hour)}</strong>.
                   Consider scheduling your most important work during this time.
                 </p>
-                <p className="insight-meta">
+                <p className="text-xs text-base-content/50 mt-2">
                   Average energy: {insights.bestTimeOfDay.averageEnergy.toFixed(1)}/5
                 </p>
               </InsightCard>
@@ -109,7 +109,7 @@ export function InsightsPage() {
                   </svg>
                 }
               >
-                <p className="insight-value">{insights.mostProductiveTemplate.templateName}</p>
+                <p className="text-lg font-bold text-base-content mb-2">{insights.mostProductiveTemplate.templateName}</p>
                 <p>
                   You complete <strong>{Math.round(insights.mostProductiveTemplate.completionRate)}%</strong>{' '}
                   of sessions using this template. It seems to work well for your rhythm!
@@ -133,18 +133,18 @@ export function InsightsPage() {
             >
               {stats.currentStreak > 0 ? (
                 <>
-                  <p className="insight-value">{stats.currentStreak} day streak!</p>
+                  <p className="text-lg font-bold text-base-content mb-2">{stats.currentStreak} day streak!</p>
                   <p>
                     {stats.currentStreak >= 7
                       ? "Amazing! You've been consistent for over a week. Keep up the great work!"
                       : stats.currentStreak >= 3
-                      ? "You're building momentum. A few more days and you'll have a solid habit!"
-                      : "Good start! Try to maintain your streak by completing at least one cycle daily."}
+                        ? "You're building momentum. A few more days and you'll have a solid habit!"
+                        : "Good start! Try to maintain your streak by completing at least one cycle daily."}
                   </p>
                 </>
               ) : (
                 <>
-                  <p className="insight-value">No active streak</p>
+                  <p className="text-lg font-bold text-base-content mb-2">No active streak</p>
                   <p>
                     Start a focus session today to begin building your streak!
                     Consistency is key to forming lasting habits.
@@ -167,38 +167,38 @@ export function InsightsPage() {
                 </svg>
               }
             >
-              <p className="insight-value">{Math.round(stats.recoveryCompliance)}% compliance</p>
+              <p className="text-lg font-bold text-base-content mb-2">{Math.round(stats.recoveryCompliance)}% compliance</p>
               <p>
                 {stats.recoveryCompliance >= 80
                   ? "Excellent! You're taking your recovery periods seriously, which helps maintain sustainable productivity."
                   : stats.recoveryCompliance >= 50
-                  ? "You're completing about half your recovery periods. Consider taking the full break time to recharge."
-                  : "You might be skipping recovery periods. Remember: rest is essential for sustained focus and preventing burnout."}
+                    ? "You're completing about half your recovery periods. Consider taking the full break time to recharge."
+                    : "You might be skipping recovery periods. Remember: rest is essential for sustained focus and preventing burnout."}
               </p>
             </InsightCard>
           </div>
 
           {/* Tips Section */}
           <Card>
-            <h2 className="card-title" style={{ marginBottom: '1rem' }}>Focus Tips</h2>
-            <ul className="tips-list">
-              <li className="tip-item">
-                <span className="tip-number">1</span>
-                <p className="tip-text">
+            <h2 className="text-lg font-semibold text-base-content mb-4">Focus Tips</h2>
+            <ul className="space-y-4">
+              <li className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">1</span>
+                <p className="text-sm text-base-content/80">
                   <strong>Use the ramp-up phase</strong>{' '}
                   to clear your desk, close unnecessary tabs, and mentally prepare for deep work.
                 </p>
               </li>
-              <li className="tip-item">
-                <span className="tip-number">2</span>
-                <p className="tip-text">
+              <li className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">2</span>
+                <p className="text-sm text-base-content/80">
                   <strong>During peak focus</strong>,
                   put your phone in another room and use website blockers if needed.
                 </p>
               </li>
-              <li className="tip-item">
-                <span className="tip-number">3</span>
-                <p className="tip-text">
+              <li className="flex gap-3">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-bold">3</span>
+                <p className="text-sm text-base-content/80">
                   <strong>Don't skip recovery</strong>.
                   Step away from your workspace, stretch, or take a short walk.
                 </p>

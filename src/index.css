@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 @plugin "daisyui" {
   themes: light, dark --prefersdark;
 }
@@ -70,6 +71,7 @@
 
 /* Custom component styles */
 @layer components {
+
   /* Custom radial gradient for timer display */
   .bg-gradient-radial {
     background: radial-gradient(circle at center, var(--tw-gradient-from) 0%, var(--tw-gradient-to) 100%);
@@ -132,10 +134,7 @@
     @apply btn-primary;
   }
 
-  /* Session setup card styling */
-  .session-setup-card {
-    @apply card bg-base-100 shadow-xl w-full max-w-lg;
-  }
+
 
   /* Energy slider custom styling */
   .energy-slider {
@@ -162,6 +161,7 @@
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(400%);
   }
@@ -173,6 +173,7 @@
 
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
+
   .recharts-cartesian-grid-horizontal line,
   .recharts-cartesian-grid-vertical line {
     stroke: oklch(var(--bc) / 0.15);

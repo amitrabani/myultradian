@@ -15,15 +15,15 @@ export function Select({ label, options, error, className = '', id, ...props }: 
   const selectId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
   return (
-    <div className="input-wrapper">
+    <div className="form-control w-full">
       {label && (
-        <label htmlFor={selectId} className="input-label">
-          {label}
+        <label htmlFor={selectId} className="label">
+          <span className="label-text font-medium">{label}</span>
         </label>
       )}
       <select
         id={selectId}
-        className={`select ${error ? 'input-error' : ''} ${className}`}
+        className={`select select-bordered w-full ${error ? 'select-error' : ''} ${className}`}
         {...props}
       >
         {options.map((option) => (
@@ -32,7 +32,11 @@ export function Select({ label, options, error, className = '', id, ...props }: 
           </option>
         ))}
       </select>
-      {error && <p className="input-error-message">{error}</p>}
+      {error && (
+        <label className="label">
+          <span className="label-text-alt text-error">{error}</span>
+        </label>
+      )}
     </div>
   );
 }
