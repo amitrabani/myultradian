@@ -1,15 +1,18 @@
+import { useState } from 'react';
 import { useRecordsStore } from '../../../stores/recordsStore';
 import { Select } from '../../../components/common/Select';
-import { Input } from '../../../components/common/Input';
 import { Button } from '../../../components/common/Button';
 import { TASK_TYPE_LABELS, type TaskType } from '../../../types/record';
 import { formatDateISO } from '../../../utils/time';
+import { DateRangeChips, type DateRangePreset } from './DateRangeChips';
 
 export function RecordFilters() {
   const filters = useRecordsStore((state) => state.filters);
   const setFilters = useRecordsStore((state) => state.setFilters);
   const clearFilters = useRecordsStore((state) => state.clearFilters);
   const getUniqueTopics = useRecordsStore((state) => state.getUniqueTopics);
+
+  const [activePreset, setActivePreset] = useState<DateRangePreset>('all');
 
   const topics = getUniqueTopics();
 
@@ -23,16 +26,32 @@ export function RecordFilters() {
     ...topics.map((topic) => ({ value: topic, label: topic })),
   ];
 
-  const today = formatDateISO(new Date());
-  const weekAgo = formatDateISO(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+  const handlePresetSelect = (preset: DateRangePreset) => {
+    setActivePreset(preset);
+    const today = new Date();
+    const todayStr = formatDateISO(today);
 
-  const handleDateRangeChange = (start: string, end: string) => {
-    if (start && end) {
-      setFilters({ ...filters, dateRange: { start, end } });
+    let start = '';
+    let end = todayStr;
+
+    if (preset === 'today') {
+      start = todayStr;
+    } else if (preset === 'week') {
+      const date = new Date();
+      date.setDate(date.getDate() - 7);
+      start = formatDateISO(date);
+    } else if (preset === 'month') {
+      const date = new Date();
+      date.setDate(1);
+      start = formatDateISO(date);
     } else {
+      // All time
       const { dateRange, ...rest } = filters;
       setFilters(rest);
+      return;
     }
+
+    setFilters({ ...filters, dateRange: { start, end } });
   };
 
   const handleTaskTypeChange = (taskType: string) => {
@@ -62,67 +81,65 @@ export function RecordFilters() {
     }
   };
 
+  const handleClear = () => {
+    clearFilters();
+    setActivePreset('all');
+  };
+
   const hasActiveFilters = Object.keys(filters).length > 0;
 
   return (
-    <div className="filters">
-      <div className="filter-row">
-        {/* Date range */}
-        <div className="filter-date-range">
-          <Input
-            type="date"
-            value={filters.dateRange?.start || ''}
-            onChange={(e) =>
-              handleDateRangeChange(e.target.value, filters.dateRange?.end || today)
-            }
-            className="w-40"
-          />
-          <span>to</span>
-          <Input
-            type="date"
-            value={filters.dateRange?.end || ''}
-            onChange={(e) =>
-              handleDateRangeChange(filters.dateRange?.start || weekAgo, e.target.value)
-            }
-            className="w-40"
+    <div className="space-y-4">
+      {/* Date Chips Row */}
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <DateRangeChips activePreset={activePreset} onSelect={handlePresetSelect} />
+
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={handleClear} className="text-error hover:bg-error/10">
+            Clear filters
+          </Button>
+        )}
+      </div>
+
+      <div className="divider my-0"></div>
+
+      {/* Attributes Row */}
+      <div className="flex flex-wrap gap-4 items-end">
+        {/* Task type filter */}
+        <div className="w-40">
+          <Select
+            label="Type"
+            options={taskTypeOptions}
+            value={filters.taskTypes?.[0] || ''}
+            onChange={(e) => handleTaskTypeChange(e.target.value)}
           />
         </div>
 
-        {/* Task type filter */}
-        <Select
-          options={taskTypeOptions}
-          value={filters.taskTypes?.[0] || ''}
-          onChange={(e) => handleTaskTypeChange(e.target.value)}
-          className="w-40"
-        />
-
         {/* Topic filter */}
         {topics.length > 0 && (
-          <Select
-            options={topicOptions}
-            value={filters.topics?.[0] || ''}
-            onChange={(e) => handleTopicChange(e.target.value)}
-            className="w-40"
-          />
+          <div className="w-48">
+            <Select
+              label="Topic"
+              options={topicOptions}
+              value={filters.topics?.[0] || ''}
+              onChange={(e) => handleTopicChange(e.target.value)}
+            />
+          </div>
         )}
 
         {/* Completed only checkbox */}
-        <label className="filter-checkbox">
-          <input
-            type="checkbox"
-            checked={filters.completedOnly || false}
-            onChange={(e) => handleCompletedOnlyChange(e.target.checked)}
-          />
-          <span>Completed only</span>
-        </label>
+        <div className="form-control">
+          <label className="label cursor-pointer gap-3">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-primary checkbox-sm"
+              checked={filters.completedOnly || false}
+              onChange={(e) => handleCompletedOnlyChange(e.target.checked)}
+            />
+            <span className="label-text font-medium">Completed Only</span>
+          </label>
+        </div>
       </div>
-
-      {/* Clear filters */}
-      {hasActiveFilters && (
-        <Button variant="ghost" size="sm" onClick={clearFilters}>
-          Clear filters
-        </Button>
-      )}
     </div>
   );
 }

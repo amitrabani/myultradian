@@ -9,6 +9,10 @@ import { FocusHeatmap } from '../../components/charts/FocusHeatmap';
 import { RecoveryImpactChart } from '../../components/charts/RecoveryImpactChart';
 import { TaskTypeEfficiencyChart } from '../../components/charts/TaskTypeEfficiencyChart';
 import { formatMinutes } from '../../utils/time';
+import { InsightsPage } from '../insights/InsightsPage';
+import { RecordsPage } from '../records/RecordsPage';
+
+import { Link } from 'react-router-dom';
 
 export function DashboardPage() {
   const { stats, chartData, insights } = useStatistics();
@@ -16,9 +20,22 @@ export function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-base-content">Dashboard</h1>
-        <p className="text-base-content/60 mt-1">Your focus statistics at a glance</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-base-content">Dashboard</h1>
+          <p className="text-sm text-base-content/60 mt-0.5">Your focus statistics at a glance</p>
+        </div>
+
+        <Link
+          to="/timer"
+          className="btn btn-ghost gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          Timer
+        </Link>
       </div>
 
       {/* Primary KPI Cards */}
@@ -90,22 +107,22 @@ export function DashboardPage() {
       </div>
 
       {/* Secondary Stats Row */}
-      <div className="stats stats-vertical sm:stats-horizontal shadow w-full bg-base-100">
+      <div className="stats stats-vertical sm:stats-horizontal w-full bg-base-100 border border-base-300">
         <div className="stat">
           <div className="stat-title">Cycles</div>
-          <div className="stat-value text-primary">{stats.completedCycles}</div>
+          <div className="stat-value text-lg text-primary">{stats.completedCycles}</div>
         </div>
         <div className="stat">
           <div className="stat-title">Day Streak</div>
-          <div className="stat-value text-secondary">{stats.currentStreak}</div>
+          <div className="stat-value text-lg text-secondary">{stats.currentStreak}</div>
         </div>
         <div className="stat">
           <div className="stat-title">Recovery</div>
-          <div className="stat-value text-accent">{Math.round(stats.recoveryCompliance)}%</div>
+          <div className="stat-value text-lg text-accent">{Math.round(stats.recoveryCompliance)}%</div>
         </div>
         <div className="stat">
           <div className="stat-title">Avg Energy</div>
-          <div className="stat-value">{stats.averageEnergy > 0 ? stats.averageEnergy.toFixed(1) : '-'}</div>
+          <div className="stat-value text-lg">{stats.averageEnergy > 0 ? stats.averageEnergy.toFixed(1) : '-'}</div>
         </div>
       </div>
 
@@ -190,6 +207,24 @@ export function DashboardPage() {
                   </CardHeader>
                   <CyclesBarChart data={chartData.dailyFocusTime} />
                 </Card>
+              </div>
+            ),
+          },
+          {
+            value: 'insights',
+            label: 'Insights',
+            content: (
+              <div className="mt-4">
+                <InsightsPage />
+              </div>
+            ),
+          },
+          {
+            value: 'records',
+            label: 'Records',
+            content: (
+              <div className="mt-4">
+                <RecordsPage />
               </div>
             ),
           },

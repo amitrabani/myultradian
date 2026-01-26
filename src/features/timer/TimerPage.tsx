@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useTimerStore } from '../../stores/timerStore';
 import { useRecordsStore } from '../../stores/recordsStore';
 import { useSettingsStore } from '../../stores/settingsStore';
@@ -227,38 +228,60 @@ export function TimerPage() {
   const isTimerActive = status === 'running' || status === 'paused';
 
   return (
-    <div className="flex flex-col items-center py-4">
+    <div className="flex flex-col items-center justify-center w-full min-h-[calc(100vh-8rem)]">
       {status === 'idle' ? (
         <SessionSetup onStart={handleStart} />
       ) : (
         <div className="flex flex-col items-center w-full max-w-md">
+          {/* Top Navigation */}
+          <div className="absolute top-4 right-4">
+            <Link
+              to="/dashboard"
+              className="btn btn-ghost btn-sm gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              <span className="hidden sm:inline">Dashboard</span>
+            </Link>
+          </div>
+
           {/* Session info */}
           {sessionTags && (
             <div className="text-center mb-6">
-              <h2 className="text-xl font-bold text-base-content">
+              <div className="badge badge-outline badge-sm mb-2 uppercase tracking-wide text-xs">
+                {sessionTags.taskType.replace('-', ' ')}
+              </div>
+              <h2 className="text-2xl font-bold text-base-content">
                 {sessionTags.topic}
               </h2>
               {sessionTags.goal && (
                 <p className="text-sm text-base-content/60 mt-1">
-                  Goal: {sessionTags.goal}
+                  {sessionTags.goal}
                 </p>
               )}
             </div>
           )}
 
           {/* Timer display */}
-          <TimerDisplay />
+          <div className="mb-6">
+            <TimerDisplay />
+          </div>
 
           {/* Stage indicator */}
           <StageIndicator />
 
           {/* Controls */}
-          {isTimerActive && <TimerControls onEnd={handleEnd} />}
+          <div className="mt-6 w-full flex justify-center">
+            {isTimerActive && <TimerControls onEnd={handleEnd} />}
+          </div>
 
           {/* Keyboard shortcuts hint */}
           <div className="mt-6 text-center">
-            <span className="text-xs text-base-content/40">
-              Space to pause/resume · Escape to end · Ctrl+Enter to skip
+            <span className="text-xs text-base-content/40 font-mono bg-base-200 px-2 py-1 rounded">
+              Space to pause
             </span>
           </div>
         </div>
@@ -287,7 +310,7 @@ export function TimerPage() {
 
       {/* Recovery check-in - shown as overlay when recovery stage completes */}
       {showRecoveryCheckIn && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <RecoveryCheckIn onComplete={handleRecoveryCheckInComplete} />
         </div>
       )}

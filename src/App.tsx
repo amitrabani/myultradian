@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { TimerPage } from './features/timer';
 import { DashboardPage } from './features/dashboard';
@@ -10,7 +10,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<TimerPage />} />
+          <Route index element={<Navigate to="/timer" replace />} />
+          <Route path="timer" element={<TimerPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="records" element={<RecordsPage />} />
           <Route path="insights" element={<InsightsPage />} />

@@ -16,17 +16,19 @@ export function TimerDisplay() {
   const strokeDashoffset = circumference * (1 - progress);
 
   return (
-    <div className="flex flex-col items-center p-6">
-      <div className="relative w-72 h-72 drop-shadow-lg">
+    <div className="flex flex-col items-center p-6 relative">
+      <div className="relative w-72 h-72">
         <svg viewBox="0 0 256 256" className="w-full h-full -rotate-90">
+          {/* Track */}
           <circle
             cx="128"
             cy="128"
             r="120"
             fill="none"
-            className="stroke-base-300"
+            className="stroke-base-200"
             strokeWidth="10"
           />
+          {/* Progress */}
           <circle
             cx="128"
             cy="128"
@@ -34,38 +36,36 @@ export function TimerDisplay() {
             fill="none"
             strokeWidth="10"
             strokeLinecap="round"
-            className="transition-all duration-500 ease-out"
+            className="transition-all duration-1000 ease-out"
             style={{
               stroke: stageColor,
               strokeDasharray: circumference,
               strokeDashoffset: strokeDashoffset,
-              filter: `drop-shadow(0 0 8px ${stageColor})`,
             }}
           />
         </svg>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-radial from-base-100/90 to-base-100/40 rounded-full">
-          <span
-            className="text-5xl font-bold tabular-nums tracking-tight"
-            style={{ color: stageColor }}
-            role="timer"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {formattedTime}
-          </span>
-          <span className="text-sm text-base-content/60 font-medium mt-2">
-            {STAGE_LABELS[currentStage]}
-          </span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="text-center">
+            <span
+              className="text-6xl font-bold tabular-nums tracking-tight block leading-none"
+              style={{ color: stageColor }}
+              role="timer"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {formattedTime}
+            </span>
+            <span className="text-sm text-base-content/60 font-medium mt-3 uppercase tracking-wider block">
+              {STAGE_LABELS[currentStage]}
+            </span>
+          </div>
         </div>
       </div>
 
       {status === 'paused' && (
-        <div className="badge badge-warning badge-lg mt-4 gap-2">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-          Paused
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100 px-5 py-2 rounded-lg border border-base-300 shadow-md z-10">
+          <span className="font-semibold uppercase tracking-wide text-warning text-sm">Paused</span>
         </div>
       )}
     </div>

@@ -60,6 +60,13 @@ export const STAGE_LABELS: Record<CycleStage, string> = {
 };
 
 export const STAGE_DESCRIPTIONS: Record<CycleStage, string> = {
+  'ramp-up': 'Set a clear, singular goal for the session. Use a ritual (e.g., closing doors, silencing phone) to signal the start of deep work.',
+  'peak': 'Engage in high-intensity, undistracted learning. Your prefrontal cortex is at peak alertness.',
+  'downshift': 'Begin transitioning out of deep focus. Wrap up your current work and note where you left off.',
+  'recovery': 'Take a genuine break to allow for mental consolidation. Ideal activities: walking, meditating, stretching, or gazing out a window.',
+};
+
+export const STAGE_TOOLTIPS: Record<CycleStage, string> = {
   'ramp-up': 'Ease into focus. Clear distractions and set intentions.',
   'peak': 'Deep work zone. Maximum concentration on your task.',
   'downshift': 'Begin winding down. Wrap up current work.',

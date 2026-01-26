@@ -1,5 +1,6 @@
+import * as Tooltip from '@radix-ui/react-tooltip';
 import { useTimerStore } from '../../../stores/timerStore';
-import { STAGE_ORDER, STAGE_LABELS, STAGE_COLORS, STAGE_DESCRIPTIONS } from '../../../types/cycle';
+import { STAGE_ORDER, STAGE_LABELS, STAGE_COLORS, STAGE_DESCRIPTIONS, STAGE_TOOLTIPS } from '../../../types/cycle';
 
 export function StageIndicator() {
   const currentStage = useTimerStore((state) => state.currentStage);
@@ -50,13 +51,33 @@ export function StageIndicator() {
         })}
       </div>
 
-      {/* Current stage description */}
+      {/* Current stage description with tooltip */}
       {currentStage && (
         <div
-          className="mt-4 p-4 rounded-2xl text-center text-sm"
-          style={{ backgroundColor: `${STAGE_COLORS[currentStage]}15` }}
+          className="mt-4 p-4 rounded-lg text-sm"
+          style={{ backgroundColor: `${STAGE_COLORS[currentStage]}10` }}
         >
-          <p className="text-base-content/80">{STAGE_DESCRIPTIONS[currentStage]}</p>
+          <div className="flex items-start gap-2">
+            <p className="text-base-content/80 flex-1">{STAGE_DESCRIPTIONS[currentStage]}</p>
+            <Tooltip.Provider delayDuration={200}>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button className="shrink-0 w-5 h-5 rounded-full bg-base-300 text-base-content/60 text-xs font-medium hover:bg-base-content/20 transition-colors">
+                    ?
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    className="bg-neutral text-neutral-content px-3 py-2 rounded text-sm shadow-md max-w-xs z-50"
+                    sideOffset={5}
+                  >
+                    {STAGE_TOOLTIPS[currentStage]}
+                    <Tooltip.Arrow className="fill-neutral" />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+          </div>
         </div>
       )}
     </div>

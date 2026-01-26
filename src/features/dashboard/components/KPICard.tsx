@@ -17,15 +17,15 @@ const colorClasses = {
 
 export function KPICard({ title, value, subtitle, icon, color }: KPICardProps) {
   return (
-    <Card className="hover:shadow-lg transition-shadow">
-      <div className="flex items-start gap-4">
-        <div className={`p-3 rounded-xl ${colorClasses[color]}`}>
-          <div className="w-6 h-6">{icon}</div>
+    <Card>
+      <div className="flex items-start gap-3">
+        <div className={`p-2.5 rounded-lg ${colorClasses[color]}`}>
+          <div className="w-5 h-5">{icon}</div>
         </div>
-        <div className="flex-1">
-          <p className="text-sm text-base-content/60 font-medium">{title}</p>
-          <p className="text-2xl font-bold text-base-content mt-1">{value}</p>
-          {subtitle && <p className="text-xs text-base-content/50 mt-1">{subtitle}</p>}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm text-base-content/60">{title}</p>
+          <p className="text-xl font-semibold text-base-content mt-0.5">{value}</p>
+          {subtitle && <p className="text-xs text-base-content/50 mt-0.5">{subtitle}</p>}
         </div>
       </div>
     </Card>
