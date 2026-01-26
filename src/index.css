@@ -1,0 +1,180 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light, dark --prefersdark;
+}
+
+/* Custom lemonade theme */
+@plugin "daisyui/theme" {
+  name: "lemonade";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(97% 0.014 254.604);
+  --color-base-200: oklch(93% 0.032 255.585);
+  --color-base-300: oklch(88% 0.059 254.128);
+  --color-base-content: oklch(37% 0.146 265.522);
+  --color-primary: oklch(67% 0.182 276.935);
+  --color-primary-content: oklch(25% 0.09 281.288);
+  --color-secondary: oklch(82% 0.189 84.429);
+  --color-secondary-content: oklch(27% 0.077 45.635);
+  --color-accent: oklch(75% 0.183 55.934);
+  --color-accent-content: oklch(26% 0.079 36.259);
+  --color-neutral: oklch(42% 0.199 265.638);
+  --color-neutral-content: oklch(97% 0.014 254.604);
+  --color-info: oklch(78% 0.154 211.53);
+  --color-info-content: oklch(30% 0.056 229.695);
+  --color-success: oklch(79% 0.209 151.711);
+  --color-success-content: oklch(26% 0.065 152.934);
+  --color-warning: oklch(75% 0.183 55.934);
+  --color-warning-content: oklch(26% 0.079 36.259);
+  --color-error: oklch(71% 0.202 349.761);
+  --color-error-content: oklch(28% 0.109 3.907);
+  --radius-selector: 0.25rem;
+  --radius-field: 0rem;
+  --radius-box: 2rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1.5px;
+  --depth: 0;
+  --noise: 1;
+}
+
+/* Custom base styles */
+@layer base {
+  body {
+    @apply min-w-80 min-h-screen;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-base-200;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-base-300 rounded;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  /* Custom radial gradient for timer display */
+  .bg-gradient-radial {
+    background: radial-gradient(circle at center, var(--tw-gradient-from) 0%, var(--tw-gradient-to) 100%);
+  }
+
+  /* Stage indicator steps */
+  .stage-steps {
+    @apply flex items-center justify-center gap-2 mt-4;
+  }
+
+  .stage-step {
+    @apply w-3 h-3 rounded-full transition-all duration-300;
+  }
+
+  .stage-step-inactive {
+    @apply bg-base-300;
+  }
+
+  .stage-step-active {
+    @apply ring-4 ring-offset-2 ring-offset-base-100;
+  }
+
+  .stage-step-completed {
+    @apply opacity-60;
+  }
+
+  /* Heatmap cell styling */
+  .heatmap-cell {
+    @apply rounded transition-colors;
+  }
+
+  /* Custom slider track for Radix */
+  [data-radix-slider-track] {
+    @apply bg-base-300 relative grow rounded-full h-2;
+  }
+
+  [data-radix-slider-range] {
+    @apply absolute bg-primary rounded-full h-full;
+  }
+
+  [data-radix-slider-thumb] {
+    @apply block w-5 h-5 bg-primary rounded-full shadow-lg;
+  }
+
+  /* Tooltip styling for Radix */
+  [data-radix-tooltip-content] {
+    @apply bg-base-content text-base-100 px-3 py-2 rounded-lg text-sm shadow-xl;
+  }
+
+  /* Recovery activity grid */
+  .recovery-grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 gap-3;
+  }
+
+  .recovery-activity-btn {
+    @apply btn btn-outline btn-sm h-auto py-3 flex-col gap-1;
+  }
+
+  .recovery-activity-btn.active {
+    @apply btn-primary;
+  }
+
+  /* Session setup card styling */
+  .session-setup-card {
+    @apply card bg-base-100 shadow-xl w-full max-w-lg;
+  }
+
+  /* Energy slider custom styling */
+  .energy-slider {
+    @apply flex items-center gap-4;
+  }
+
+  .energy-value {
+    @apply text-2xl font-bold text-primary min-w-12 text-center;
+  }
+}
+
+/* Recharts styling for dark mode compatibility */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: oklch(var(--bc) / 0.1);
+}
+
+.recharts-text {
+  fill: oklch(var(--bc) / 0.6);
+}
+
+/* Progress bar animations */
+@keyframes progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+.progress-indeterminate {
+  animation: progress-indeterminate 1.5s infinite ease-in-out;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .recharts-cartesian-grid-horizontal line,
+  .recharts-cartesian-grid-vertical line {
+    stroke: oklch(var(--bc) / 0.15);
+  }
+}
