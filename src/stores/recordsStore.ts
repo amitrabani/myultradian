@@ -16,6 +16,19 @@ import type {
 import type { CycleStage, StageDuration } from '../types/cycle';
 import { STORAGE_KEYS } from '../utils/constants';
 import { calculateRecordDuration } from '../utils/statistics';
+import { db, auth } from '../lib/firebase';
+import {
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  orderBy,
+  deleteDoc,
+  writeBatch
+} from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+
 
 interface RecordsState {
   records: FocusRecord[];
@@ -25,10 +38,13 @@ interface RecordsState {
 
 interface RecordsActions {
   // CRUD
-  addRecord: (record: Omit<FocusRecord, 'id'>) => string;
-  updateRecord: (id: string, updates: Partial<FocusRecord>) => void;
-  deleteRecord: (id: string) => void;
-  deleteRecords: (ids: string[]) => void;
+  addRecord: (record: Omit<FocusRecord, 'id'>) => Promise<string>;
+  updateRecord: (id: string, updates: Partial<FocusRecord>) => Promise<void>;
+  deleteRecord: (id: string) => Promise<void>;
+  deleteRecords: (ids: string[]) => Promise<void>;
+  syncWithFirestore: (userId: string) => Promise<void>;
+  clearRecords: () => void;
+
 
   // Duplicate
   duplicateRecord: (id: string) => SessionTags | null;
@@ -57,7 +73,7 @@ interface RecordsActions {
   }) => string;
 
   // Self-report
-  addSelfReport: (recordId: string, report: SelfReport) => void;
+  addSelfReport: (recordId: string, report: SelfReport) => Promise<void>;
 
   // Filtering and sorting
   setFilters: (filters: RecordFilters) => void;
@@ -84,35 +100,99 @@ export const useRecordsStore = create<RecordsState & RecordsActions>()(
     (set, get) => ({
       ...initialState,
 
-      addRecord: (record) => {
+      addRecord: async (record) => {
         const id = generateId();
         const newRecord: FocusRecord = { ...record, id };
+
         set((state) => ({
           records: [...state.records, newRecord],
         }));
+
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            await setDoc(doc(db, 'users', user.uid, 'records', id), newRecord);
+          } catch (error) {
+            console.error("Error adding record to Firestore:", error);
+          }
+        }
         return id;
       },
 
-      updateRecord: (id, updates) => {
+      updateRecord: async (id, updates) => {
         set((state) => ({
           records: state.records.map((r) =>
             r.id === id ? { ...r, ...updates } : r
           ),
         }));
+
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            await setDoc(doc(db, 'users', user.uid, 'records', id), updates, { merge: true });
+          } catch (error) {
+            console.error("Error updating record in Firestore:", error);
+          }
+        }
       },
 
-      deleteRecord: (id) => {
+      deleteRecord: async (id) => {
         set((state) => ({
           records: state.records.filter((r) => r.id !== id),
         }));
+
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            await deleteDoc(doc(db, 'users', user.uid, 'records', id));
+          } catch (error) {
+            console.error("Error deleting record from Firestore:", error);
+          }
+        }
       },
 
-      deleteRecords: (ids) => {
+      deleteRecords: async (ids) => {
         const idSet = new Set(ids);
         set((state) => ({
           records: state.records.filter((r) => !idSet.has(r.id)),
         }));
+
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            const batch = writeBatch(db);
+            ids.forEach(id => {
+              batch.delete(doc(db, 'users', user.uid, 'records', id));
+            });
+            await batch.commit();
+          } catch (error) {
+            console.error("Error deleting multiple records from Firestore:", error);
+          }
+        }
       },
+
+      syncWithFirestore: async (userId) => {
+        try {
+          const q = query(
+            collection(db, 'users', userId, 'records'),
+            orderBy('createdAt', 'desc')
+          );
+          const querySnapshot = await getDocs(q);
+          const firestoreRecords: FocusRecord[] = [];
+          querySnapshot.forEach((doc) => {
+            firestoreRecords.push(doc.data() as FocusRecord);
+          });
+
+          set({ records: firestoreRecords });
+        } catch (error) {
+          console.error("Error syncing with Firestore:", error);
+        }
+      },
+
+      clearRecords: () => {
+        set({ records: [] });
+      },
+
 
       duplicateRecord: (id) => {
         const { records } = get();
@@ -166,12 +246,9 @@ export const useRecordsStore = create<RecordsState & RecordsActions>()(
         return id;
       },
 
-      addSelfReport: (recordId, report) => {
-        set((state) => ({
-          records: state.records.map((r) =>
-            r.id === recordId ? { ...r, selfReport: report } : r
-          ),
-        }));
+      addSelfReport: async (recordId, report) => {
+        const { updateRecord } = get();
+        await updateRecord(recordId, { selfReport: report });
       },
 
       setFilters: (filters) => {
@@ -255,6 +332,16 @@ export const useRecordsStore = create<RecordsState & RecordsActions>()(
     }
   )
 );
+
+// Initialize auth listener for firestore sync
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await useRecordsStore.getState().syncWithFirestore(user.uid);
+  } else {
+    useRecordsStore.getState().clearRecords();
+  }
+});
+
 
 // Selectors
 export const selectRecords = (state: RecordsState & RecordsActions) => state.records;

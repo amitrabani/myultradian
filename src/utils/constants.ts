@@ -8,6 +8,7 @@ export const STORAGE_KEYS = {
   SETTINGS: 'ultradian-settings',
   NOTES: 'ultradian-notes',
   REFLECTIONS: 'ultradian-reflections',
+  CHIPS: 'ultradian-chips',
 } as const;
 
 // Keyboard shortcuts

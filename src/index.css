@@ -4,32 +4,32 @@
   themes: light, dark --prefersdark;
 }
 
-/* Clean professional theme */
+/* Premium dark theme */
 @plugin "daisyui/theme" {
   name: "ultradian";
   default: true;
-  prefersdark: false;
-  color-scheme: "light";
-  --color-base-100: oklch(99% 0 0);
-  --color-base-200: oklch(96% 0.005 260);
-  --color-base-300: oklch(91% 0.01 260);
-  --color-base-content: oklch(25% 0.01 260);
-  --color-primary: oklch(45% 0.15 260);
-  --color-primary-content: oklch(98% 0 0);
-  --color-secondary: oklch(55% 0.12 170);
-  --color-secondary-content: oklch(98% 0 0);
-  --color-accent: oklch(60% 0.18 30);
-  --color-accent-content: oklch(98% 0 0);
-  --color-neutral: oklch(30% 0.02 260);
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(14% 0.02 260);
+  --color-base-200: oklch(11% 0.02 260);
+  --color-base-300: oklch(9% 0.03 260);
+  --color-base-content: oklch(95% 0.01 260);
+  --color-primary: oklch(70% 0.16 260);
+  --color-primary-content: oklch(10% 0.02 260);
+  --color-secondary: oklch(70% 0.14 170);
+  --color-secondary-content: oklch(10% 0.02 260);
+  --color-accent: oklch(75% 0.18 30);
+  --color-accent-content: oklch(10% 0.02 260);
+  --color-neutral: oklch(25% 0.04 260);
   --color-neutral-content: oklch(98% 0 0);
-  --color-info: oklch(60% 0.15 240);
-  --color-info-content: oklch(98% 0 0);
-  --color-success: oklch(60% 0.16 145);
-  --color-success-content: oklch(98% 0 0);
-  --color-warning: oklch(75% 0.15 70);
-  --color-warning-content: oklch(25% 0.05 70);
-  --color-error: oklch(55% 0.2 25);
-  --color-error-content: oklch(98% 0 0);
+  --color-info: oklch(70% 0.15 240);
+  --color-info-content: oklch(10% 0.02 260);
+  --color-success: oklch(75% 0.16 145);
+  --color-success-content: oklch(10% 0.02 260);
+  --color-warning: oklch(85% 0.15 70);
+  --color-warning-content: oklch(20% 0.05 70);
+  --color-error: oklch(70% 0.2 25);
+  --color-error-content: oklch(10% 0.02 260);
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 0.75rem;
@@ -150,7 +150,8 @@
 
   /* Clean panel style */
   .glass-panel {
-    @apply bg-base-100 border border-base-300 shadow-sm;
+    @apply bg-base-100 border border-white/5 shadow-2xl shadow-black/40;
+    backdrop-filter: blur(8px);
   }
 }
 

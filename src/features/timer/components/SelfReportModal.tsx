@@ -3,6 +3,7 @@ import { Modal } from '../../../components/common/Modal';
 import { Button } from '../../../components/common/Button';
 import { Input, Textarea } from '../../../components/common/Input';
 import { FrictionMeter } from './FrictionMeter';
+import { RadixSlider } from '../../../components/common/RadixSlider';
 import type { SelfReport, FrictionLevel } from '../../../types/record';
 
 interface FrictionData {
@@ -23,12 +24,14 @@ interface SelfReportModalProps {
 
 export function SelfReportModal({ isOpen, onClose, onSubmit, completed, frictionData }: SelfReportModalProps) {
   const [energyLevel, setEnergyLevel] = useState<1 | 2 | 3 | 4 | 5>(3);
+  const [effort, setEffort] = useState(5);
   const [distractionCount, setDistractionCount] = useState(0);
   const [notes, setNotes] = useState('');
 
   const handleSubmit = () => {
     onSubmit({
       energyLevel,
+      effort,
       distractionCount,
       notes: notes.trim() || undefined,
     });
@@ -40,6 +43,14 @@ export function SelfReportModal({ isOpen, onClose, onSubmit, completed, friction
 
   const energyLabels = ['Very Low', 'Low', 'Medium', 'High', 'Very High'];
   const energyEmojis = ['😩', '😔', '😐', '🙂', '😊'];
+
+  const effortValueFormatter = (val: number) => {
+    if (val <= 2) return `${val} (Light)`;
+    if (val <= 4) return `${val} (Moderate)`;
+    if (val <= 7) return `${val} (Substantial)`;
+    if (val <= 9) return `${val} (Deep Focus)`;
+    return `${val} (Peak Effort)`;
+  };
 
   return (
     <Modal
@@ -102,6 +113,21 @@ export function SelfReportModal({ isOpen, onClose, onSubmit, completed, friction
               </button>
             ))}
           </div>
+        </div>
+
+        <div>
+          <RadixSlider
+            label="How much effort did you put into this session?"
+            value={[effort]}
+            onValueChange={(v) => setEffort(v[0])}
+            min={1}
+            max={10}
+            step={1}
+            valueFormatter={effortValueFormatter}
+          />
+          <p style={{ marginTop: '0.25rem', fontSize: '0.75rem', color: 'var(--color-slate-500)' }}>
+            1 = Very light, 10 = Maximum intensity
+          </p>
         </div>
 
         <div>

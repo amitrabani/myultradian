@@ -36,6 +36,16 @@ export function countCompletedCycles(records: FocusRecord[]): number {
 }
 
 /**
+ * Count cycles completed today
+ */
+export function countCyclesToday(records: FocusRecord[]): number {
+  const today = formatDateISO(new Date());
+  return records.filter(r =>
+    r.completed && formatDateISO(new Date(r.createdAt)) === today
+  ).length;
+}
+
+/**
  * Calculate recovery compliance rate (percentage of cycles with full recovery)
  */
 export function calculateRecoveryCompliance(records: FocusRecord[]): number {

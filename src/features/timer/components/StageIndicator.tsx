@@ -1,11 +1,26 @@
-import * as Tooltip from '@radix-ui/react-tooltip';
+import { useRef, useEffect } from 'react';
+import { Target, Lightbulb } from 'lucide-react';
 import { useTimerStore } from '../../../stores/timerStore';
-import { STAGE_ORDER, STAGE_LABELS, STAGE_COLORS, STAGE_DESCRIPTIONS, STAGE_TOOLTIPS } from '../../../types/cycle';
+import { STAGE_ORDER, STAGE_LABELS, STAGE_COLORS, STAGE_DESCRIPTIONS } from '../../../types/cycle';
 
 export function StageIndicator() {
   const currentStage = useTimerStore((state) => state.currentStage);
   const currentStageIndex = useTimerStore((state) => state.currentStageIndex);
   const status = useTimerStore((state) => state.status);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current && currentStage) {
+      const activeElement = scrollRef.current.querySelector(`[data-stage="${currentStage}"]`);
+      if (activeElement) {
+        activeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        });
+      }
+    }
+  }, [currentStage]);
 
   if (status === 'idle') {
     return null;
@@ -51,35 +66,65 @@ export function StageIndicator() {
         })}
       </div>
 
-      {/* Current stage description with tooltip */}
-      {currentStage && (
+      {/* Stage Carousel */}
+      <div className="mt-6 relative">
         <div
-          className="mt-4 p-4 rounded-lg text-sm"
-          style={{ backgroundColor: `${STAGE_COLORS[currentStage]}10` }}
+          ref={scrollRef}
+          className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 pb-4 px-1"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          <div className="flex items-start gap-2">
-            <p className="text-base-content/80 flex-1">{STAGE_DESCRIPTIONS[currentStage]}</p>
-            <Tooltip.Provider delayDuration={200}>
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <button className="shrink-0 w-5 h-5 rounded-full bg-base-300 text-base-content/60 text-xs font-medium hover:bg-base-content/20 transition-colors">
-                    ?
-                  </button>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    className="bg-neutral text-neutral-content px-3 py-2 rounded text-sm shadow-md max-w-xs z-50"
-                    sideOffset={5}
-                  >
-                    {STAGE_TOOLTIPS[currentStage]}
-                    <Tooltip.Arrow className="fill-neutral" />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
-            </Tooltip.Provider>
-          </div>
+          {STAGE_ORDER.map((stage) => {
+            const isActive = stage === currentStage;
+            const description = STAGE_DESCRIPTIONS[stage];
+            const [title, ...rest] = description.split('\n\n');
+
+            return (
+              <div
+                key={stage}
+                data-stage={stage}
+                className={`snap-center shrink-0 w-full p-5 rounded-2xl border transition-all duration-300 ${isActive
+                  ? 'bg-base-200 border-base-content/10 shadow-lg scale-[1.02]'
+                  : 'bg-base-200/40 border-transparent opacity-40 scale-95 blur-[1px]'
+                  }`}
+                style={{
+                  backgroundColor: isActive ? `${STAGE_COLORS[stage]}15` : undefined,
+                  borderColor: isActive ? `${STAGE_COLORS[stage]}30` : undefined
+                }}
+              >
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2" style={{ color: STAGE_COLORS[stage] }}>
+                  {title.replace(/\*\*/g, '')}
+                </h3>
+                <div className="space-y-3 text-sm leading-relaxed text-base-content/80">
+                  {rest.join('\n\n').split('\n').map((line, i) => {
+                    const isAction = line.startsWith('Action:');
+                    const isGoal = line.startsWith('Goal:');
+
+                    return (
+                      <div key={i} className="flex gap-3 items-start">
+                        {isAction && <Target className="w-4 h-4 mt-0.5 shrink-0 opacity-70" />}
+                        {isGoal && <Lightbulb className="w-4 h-4 mt-0.5 shrink-0 opacity-70" />}
+                        {!isAction && !isGoal && <div className="w-4" />}
+                        <p>{line.replace(/^(Action|Goal):\s*/, '')}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      )}
+
+        {/* Indicators */}
+        <div className="flex justify-center gap-1.5 mt-1">
+          {STAGE_ORDER.map((stage) => (
+            <div
+              key={stage}
+              className={`h-1 rounded-full transition-all duration-300 ${stage === currentStage ? 'w-6 bg-base-content/40' : 'w-1.5 bg-base-content/10'
+                }`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

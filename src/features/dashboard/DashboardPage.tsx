@@ -12,8 +12,6 @@ import { formatMinutes } from '../../utils/time';
 import { InsightsPage } from '../insights/InsightsPage';
 import { RecordsPage } from '../records/RecordsPage';
 
-import { Link } from 'react-router-dom';
-
 export function DashboardPage() {
   const { stats, chartData, insights } = useStatistics();
 
@@ -25,17 +23,6 @@ export function DashboardPage() {
           <h1 className="text-xl font-semibold text-base-content">Dashboard</h1>
           <p className="text-sm text-base-content/60 mt-0.5">Your focus statistics at a glance</p>
         </div>
-
-        <Link
-          to="/timer"
-          className="btn btn-ghost gap-2"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          Timer
-        </Link>
       </div>
 
       {/* Primary KPI Cards */}

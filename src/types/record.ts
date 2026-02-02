@@ -14,6 +14,7 @@ export const TASK_TYPE_LABELS: Record<TaskType, string> = {
 // Extended SessionTags with pre-session data
 export interface SessionTags {
   topic: string;
+  subTopic?: string;
   taskType: TaskType;
   goal?: string;
   intention?: string; // Required, max 1 sentence
@@ -22,6 +23,7 @@ export interface SessionTags {
 
 export interface SelfReport {
   energyLevel: 1 | 2 | 3 | 4 | 5;
+  effort: number; // 1-10
   distractionCount: number;
   notes?: string;
 }

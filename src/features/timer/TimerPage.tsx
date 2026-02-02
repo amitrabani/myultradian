@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTimerStore } from '../../stores/timerStore';
 import { useRecordsStore } from '../../stores/recordsStore';
 import { useSettingsStore } from '../../stores/settingsStore';
@@ -21,6 +21,7 @@ import {
 } from './components';
 
 export function TimerPage() {
+  const navigate = useNavigate();
   const [showSelfReport, setShowSelfReport] = useState(false);
   const [pendingRecordId, setPendingRecordId] = useState<string | null>(null);
   const [sessionCompleted, setSessionCompleted] = useState(false);
@@ -94,9 +95,9 @@ export function TimerPage() {
       }
     }
 
-    // Show recovery check-in when entering completed state (after recovery)
+    // Navigate to dashboard when cycle completes
     if (!hasNextStage && prevStage === 'recovery') {
-      setShowRecoveryCheckIn(true);
+      // Will be handled by the completed status effect
     }
   }, [advanceToNextStage, notifications.sound, notifications.browserNotifications, sessionTags, checkMomentumEligibility]);
 
@@ -112,8 +113,9 @@ export function TimerPage() {
   );
 
   // Handle session end
-  const handleEnd = useCallback(() => {
+  const handleEnd = useCallback(async () => {
     if (!currentTemplate || !sessionTags) return;
+
 
     // Capture session data before ending
     const frictionLevel = calculateFrictionLevel();
@@ -130,7 +132,8 @@ export function TimerPage() {
 
     const { actualDurations, endedAtStage, completed } = endSession();
 
-    const recordId = createRecordFromSession({
+    const recordId = await createRecordFromSession({
+
       templateId: currentTemplate.id,
       templateName: currentTemplate.name,
       plannedDurations: currentTemplate.durations,
@@ -154,6 +157,8 @@ export function TimerPage() {
     setPendingRecordId(recordId);
     setSessionCompleted(completed);
     setShowSelfReport(true);
+
+    // Navigation will be handled in handleSelfReportSubmit or handleSelfReportClose
   }, [
     currentTemplate,
     sessionTags,
@@ -172,10 +177,14 @@ export function TimerPage() {
 
   // Check for completed status
   useEffect(() => {
-    if (status === 'completed' && !showRecoveryCheckIn) {
-      handleEnd();
+    if (status === 'completed') {
+      // Small delay to ensure any final state updates are processed
+      const timer = setTimeout(() => {
+        handleEnd();
+      }, 500);
+      return () => clearTimeout(timer);
     }
-  }, [status, handleEnd, showRecoveryCheckIn]);
+  }, [status, handleEnd]);
 
   // Handle self-report submission
   const handleSelfReportSubmit = useCallback(
@@ -186,8 +195,9 @@ export function TimerPage() {
       setShowSelfReport(false);
       setPendingRecordId(null);
       setSessionCompleted(false);
+      navigate('/dashboard');
     },
-    [pendingRecordId, addSelfReport]
+    [pendingRecordId, addSelfReport, navigate]
   );
 
   // Handle self-report close (skip)
@@ -197,7 +207,8 @@ export function TimerPage() {
     setSessionCompleted(false);
     setEarlyStopReason(undefined);
     sessionDataRef.current = null;
-  }, []);
+    navigate('/dashboard');
+  }, [navigate]);
 
   // Handle momentum modal close
   const handleMomentumModalClose = useCallback(() => {
@@ -233,20 +244,7 @@ export function TimerPage() {
         <SessionSetup onStart={handleStart} />
       ) : (
         <div className="flex flex-col items-center w-full max-w-md">
-          {/* Top Navigation */}
-          <div className="absolute top-4 right-4">
-            <Link
-              to="/dashboard"
-              className="btn btn-ghost btn-sm gap-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
-              </svg>
-              <span className="hidden sm:inline">Dashboard</span>
-            </Link>
-          </div>
+          {/* Top Navigation removed - promoted to global Layout */}
 
           {/* Session info */}
           {sessionTags && (
@@ -255,7 +253,7 @@ export function TimerPage() {
                 {sessionTags.taskType.replace('-', ' ')}
               </div>
               <h2 className="text-2xl font-bold text-base-content">
-                {sessionTags.topic}
+                {sessionTags.topic}{sessionTags.subTopic ? `: ${sessionTags.subTopic}` : ''}
               </h2>
               {sessionTags.goal && (
                 <p className="text-sm text-base-content/60 mt-1">

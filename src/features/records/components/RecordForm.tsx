@@ -25,6 +25,10 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
   const [distractionCount, setDistractionCount] = useState(0);
   const [notes, setNotes] = useState('');
   const [completed, setCompleted] = useState(true);
+  const [durationRampUp, setDurationRampUp] = useState(0);
+  const [durationPeak, setDurationPeak] = useState(0);
+  const [durationDownshift, setDurationDownshift] = useState(0);
+  const [durationRecovery, setDurationRecovery] = useState(0);
 
   // Reset form when record changes
   useEffect(() => {
@@ -37,15 +41,24 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
       setDistractionCount(record.selfReport?.distractionCount ?? 0);
       setNotes(record.selfReport?.notes || '');
       setCompleted(record.completed);
+      setDurationRampUp(record.actualDurations['ramp-up'] ?? 0);
+      setDurationPeak(record.actualDurations['peak'] ?? 0);
+      setDurationDownshift(record.actualDurations['downshift'] ?? 0);
+      setDurationRecovery(record.actualDurations['recovery'] ?? 0);
     } else {
+      const defaultTemplate = DEFAULT_TEMPLATES[0];
       setTopic('');
       setTaskType('deep-work');
       setGoal('');
-      setTemplateId(DEFAULT_TEMPLATES[0].id);
+      setTemplateId(defaultTemplate.id);
       setEnergyLevel(null);
       setDistractionCount(0);
       setNotes('');
       setCompleted(true);
+      setDurationRampUp(defaultTemplate.durations['ramp-up']);
+      setDurationPeak(defaultTemplate.durations['peak']);
+      setDurationDownshift(defaultTemplate.durations['downshift']);
+      setDurationRecovery(defaultTemplate.durations['recovery']);
     }
   }, [record]);
 
@@ -53,6 +66,13 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
     if (!topic.trim()) return;
 
     const template = DEFAULT_TEMPLATES.find((t) => t.id === templateId)!;
+
+    const actualDurations = {
+      'ramp-up': durationRampUp,
+      'peak': durationPeak,
+      'downshift': durationDownshift,
+      'recovery': durationRecovery,
+    };
 
     if (record) {
       updateRecord(record.id, {
@@ -67,6 +87,7 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
         templateId,
         templateName: template.name,
         completed,
+        actualDurations,
         selfReport: energyLevel
           ? {
               energyLevel,
@@ -83,7 +104,7 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
         templateId,
         templateName: template.name,
         plannedDurations: template.durations,
-        actualDurations: template.durations,
+        actualDurations,
         completed,
         endedEarly: !completed,
         tags: {
@@ -153,6 +174,47 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
           value={templateId}
           onChange={(e) => setTemplateId(e.target.value)}
         />
+
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text font-medium">Stage Durations (minutes)</span>
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              label="Ramp-up"
+              type="number"
+              min={0}
+              value={durationRampUp}
+              onChange={(e) => setDurationRampUp(Math.max(0, parseInt(e.target.value) || 0))}
+            />
+            <Input
+              label="Peak Focus"
+              type="number"
+              min={0}
+              value={durationPeak}
+              onChange={(e) => setDurationPeak(Math.max(0, parseInt(e.target.value) || 0))}
+            />
+            <Input
+              label="Downshift"
+              type="number"
+              min={0}
+              value={durationDownshift}
+              onChange={(e) => setDurationDownshift(Math.max(0, parseInt(e.target.value) || 0))}
+            />
+            <Input
+              label="Recovery"
+              type="number"
+              min={0}
+              value={durationRecovery}
+              onChange={(e) => setDurationRecovery(Math.max(0, parseInt(e.target.value) || 0))}
+            />
+          </div>
+          <label className="label">
+            <span className="label-text-alt text-base-content/50">
+              Total: {durationRampUp + durationPeak + durationDownshift + durationRecovery} min
+            </span>
+          </label>
+        </div>
 
         <label className="label cursor-pointer justify-start gap-3">
           <input

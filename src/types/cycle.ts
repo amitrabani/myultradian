@@ -60,10 +60,10 @@ export const STAGE_LABELS: Record<CycleStage, string> = {
 };
 
 export const STAGE_DESCRIPTIONS: Record<CycleStage, string> = {
-  'ramp-up': 'Set a clear, singular goal for the session. Use a ritual (e.g., closing doors, silencing phone) to signal the start of deep work.',
-  'peak': 'Engage in high-intensity, undistracted learning. Your prefrontal cortex is at peak alertness.',
-  'downshift': 'Begin transitioning out of deep focus. Wrap up your current work and note where you left off.',
-  'recovery': 'Take a genuine break to allow for mental consolidation. Ideal activities: walking, meditating, stretching, or gazing out a window.',
+  'ramp-up': '**0–10m: The Scaffolding**\n\nAction: Perform a "Picture Walk."\nGoal: Scan headings and diagrams to create a mental map before diving in.',
+  'peak': '**10–70m: The Deep Build**\n\nAction: Practice Retrieval and Interleaving.\nGoal: Avoid "illusions of competence." If stuck, move on to bypass the Einstellung Effect.',
+  'downshift': '**70–90m: The Glue**\n\nAction: Use the Feynman Technique.\nGoal: Summarize what you learned in one simple sentence to solidify the "chunk."',
+  'recovery': '**90–110m: The Diffuse Mode**\n\nAction: Total sensory reset. No screens, no input.\nGoal: Let your background processor consolidate memories while you walk or rest.',
 };
 
 export const STAGE_TOOLTIPS: Record<CycleStage, string> = {
