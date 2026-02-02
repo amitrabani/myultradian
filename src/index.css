@@ -4,31 +4,31 @@
   themes: light, dark --prefersdark;
 }
 
-/* Premium dark theme */
+/* Premium dark theme (Lightened) */
 @plugin "daisyui/theme" {
   name: "ultradian";
   default: true;
   prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(14% 0.02 260);
-  --color-base-200: oklch(11% 0.02 260);
-  --color-base-300: oklch(9% 0.03 260);
-  --color-base-content: oklch(95% 0.01 260);
-  --color-primary: oklch(70% 0.16 260);
+  --color-base-100: oklch(28% 0.02 260);
+  --color-base-200: oklch(24% 0.02 260);
+  --color-base-300: oklch(20% 0.03 260);
+  --color-base-content: oklch(98% 0.01 260);
+  --color-primary: oklch(75% 0.16 260);
   --color-primary-content: oklch(10% 0.02 260);
-  --color-secondary: oklch(70% 0.14 170);
+  --color-secondary: oklch(75% 0.14 170);
   --color-secondary-content: oklch(10% 0.02 260);
-  --color-accent: oklch(75% 0.18 30);
+  --color-accent: oklch(80% 0.18 30);
   --color-accent-content: oklch(10% 0.02 260);
-  --color-neutral: oklch(25% 0.04 260);
+  --color-neutral: oklch(35% 0.04 260);
   --color-neutral-content: oklch(98% 0 0);
-  --color-info: oklch(70% 0.15 240);
+  --color-info: oklch(75% 0.15 240);
   --color-info-content: oklch(10% 0.02 260);
-  --color-success: oklch(75% 0.16 145);
+  --color-success: oklch(80% 0.16 145);
   --color-success-content: oklch(10% 0.02 260);
-  --color-warning: oklch(85% 0.15 70);
+  --color-warning: oklch(90% 0.15 70);
   --color-warning-content: oklch(20% 0.05 70);
-  --color-error: oklch(70% 0.2 25);
+  --color-error: oklch(75% 0.2 25);
   --color-error-content: oklch(10% 0.02 260);
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
