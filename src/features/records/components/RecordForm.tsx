@@ -22,6 +22,7 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
   const [goal, setGoal] = useState('');
   const [templateId, setTemplateId] = useState(DEFAULT_TEMPLATES[0].id);
   const [energyLevel, setEnergyLevel] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
+  const [effort, setEffort] = useState(5);
   const [distractionCount, setDistractionCount] = useState(0);
   const [notes, setNotes] = useState('');
   const [completed, setCompleted] = useState(true);
@@ -38,6 +39,7 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
       setGoal(record.tags.goal || '');
       setTemplateId(record.templateId);
       setEnergyLevel(record.selfReport?.energyLevel ?? null);
+      setEffort(record.selfReport?.effort ?? 5);
       setDistractionCount(record.selfReport?.distractionCount ?? 0);
       setNotes(record.selfReport?.notes || '');
       setCompleted(record.completed);
@@ -52,6 +54,7 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
       setGoal('');
       setTemplateId(defaultTemplate.id);
       setEnergyLevel(null);
+      setEffort(5);
       setDistractionCount(0);
       setNotes('');
       setCompleted(true);
@@ -90,10 +93,11 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
         actualDurations,
         selfReport: energyLevel
           ? {
-              energyLevel,
-              distractionCount,
-              notes: notes.trim() || undefined,
-            }
+            energyLevel,
+            effort,
+            distractionCount,
+            notes: notes.trim() || undefined,
+          }
           : undefined,
       });
     } else {
@@ -114,10 +118,11 @@ export function RecordForm({ isOpen, onClose, record }: RecordFormProps) {
         },
         selfReport: energyLevel
           ? {
-              energyLevel,
-              distractionCount,
-              notes: notes.trim() || undefined,
-            }
+            energyLevel,
+            effort,
+            distractionCount,
+            notes: notes.trim() || undefined,
+          }
           : undefined,
       });
     }
